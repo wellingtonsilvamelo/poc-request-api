@@ -8,7 +8,9 @@ spring:
       bootstrap-servers: kafka:9092
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-    topic: poc-quote-request
+    topics:
+      pocQuoteRequest: poc-quote-request
+      pocQuoteCalc: poc-quote-calc
 
 server:
   port: 8081

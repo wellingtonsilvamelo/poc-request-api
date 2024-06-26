@@ -1,6 +1,8 @@
 package br.com.tomwell.poc_request_api.api.controller;
 
 import br.com.tomwell.poc_request_api.api.controller.dto.CotacaoRequest;
+import br.com.tomwell.poc_request_api.api.controller.dto.CotacaoResponse;
+import br.com.tomwell.poc_request_api.mapper.CotacaoMapper;
 import br.com.tomwell.poc_request_api.service.CotacaoService;
 import br.com.tomwell.poc_request_api.service.client.http.CotacaoProdutoAResponse;
 import br.com.tomwell.poc_request_api.service.impl.CotacaoServiceImpl;
@@ -22,14 +24,15 @@ public class CotacaoController {
 
     @PostMapping("/async")
     public ResponseEntity<String> quoteAsync(@RequestBody CotacaoRequest quoteRequest) {
-        cotacaoService.processarCotacao(quoteRequest);
+        cotacaoService.processarCotacao(CotacaoMapper.INSTANCE.toCotacao(quoteRequest));
         return ResponseEntity.accepted().body("Solicitação recebida com sucesso");
     }
 
     @PostMapping("sync")
-    public ResponseEntity<CotacaoProdutoAResponse> quoteSync(@RequestBody CotacaoRequest cotacaoRequest) {
-        var cotacaoProdutoAResponse = cotacaoService.processarCotacaoSincroca(cotacaoRequest);
-        return ResponseEntity.accepted().body(cotacaoProdutoAResponse);
+    public ResponseEntity<CotacaoResponse> quoteSync(@RequestBody CotacaoRequest cotacaoRequest) {
+        var cotacao = cotacaoService.processarCotacaoSincroca(CotacaoMapper.INSTANCE.toCotacao(cotacaoRequest));
+        return ResponseEntity.ok().body(
+            CotacaoMapper.INSTANCE.toCotacaoResponse(cotacao));
     }
 
 }

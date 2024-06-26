@@ -19,11 +19,11 @@ public class ProdutoBClient {
             throw new RuntimeException(e);
         }
 
-        throw new IllegalArgumentException("Erro inesperado!");
+//        throw new IllegalArgumentException("Erro inesperado!");
 
-        /*return restClient.get()
+        return restClient.get()
             .uri("http://localhost:3000/produtos/2")
             .retrieve()
-            .body(CotacaoProdutoAResponse.class);*/
+            .body(CotacaoProdutoAResponse.class);
     }
 }

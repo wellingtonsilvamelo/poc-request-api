@@ -26,7 +26,7 @@ public class CotacaoProdutoCFuture implements CotacaoProdutoFeature<CotacaoProdu
             .supplyAsync(produtoCClient::obterCotacao)
             .exceptionally(ex -> {
                 log.error("Erro ao obter cotação do ProdutoC: {}", ex.getMessage());
-                return new CotacaoProdutoAResponse();
+                return null;
             });
 
     }

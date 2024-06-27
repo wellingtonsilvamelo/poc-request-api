@@ -1,5 +1,6 @@
 package br.com.tomwell.poc_request_api.service.impl;
 
+import br.com.tomwell.poc_request_api.api.controller.dto.CotacaoRequest;
 import br.com.tomwell.poc_request_api.mapper.CotacaoMapper;
 import br.com.tomwell.poc_request_api.model.Cotacao;
 import br.com.tomwell.poc_request_api.api.controller.dto.CotacaoResponse;
@@ -14,9 +15,12 @@ import br.com.tomwell.poc_request_api.utils.CotacaoFeatureUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 public class  CotacaoServiceImpl implements CotacaoService {
@@ -45,8 +49,9 @@ public class  CotacaoServiceImpl implements CotacaoService {
     }
 
     @Override
-    public Cotacao processarCotacaoSincroca(Cotacao cotacao) {
+    public List<Cotacao> processarCotacaoSincroca(Cotacao cotacao) {
         Map<Integer, CompletableFuture<?>> futuresMap = new HashMap<>();
+        List<Cotacao> cotacoes = new ArrayList<>();
 
         cotacao.getProdutos().forEach(idProduto -> {
             CotacaoProdutoFeature<?> cotacaoProdutoFeature = cotacaoStrategy.getStrategy(idProduto);
@@ -55,33 +60,17 @@ public class  CotacaoServiceImpl implements CotacaoService {
             }
         });
 
-        /*CompletableFuture<CotacaoProdutoAResponse> futureA = CompletableFuture
-            .supplyAsync(produtoAClient::obterCotacao)
-            .exceptionally(ex -> {
-                log.error("Erro ao obter cotação do ProdutoA: {}", ex.getMessage());
-                return new CotacaoProdutoAResponse();
-            });
-
-        CompletableFuture<CotacaoProdutoAResponse> futureB = CompletableFuture
-            .supplyAsync(produtoBClient::obterCotacao)
-            .exceptionally(ex -> {
-                log.error("Erro ao obter cotação do ProdutoB: {}", ex.getMessage());
-                return new CotacaoProdutoAResponse();
-            });
-
-        CompletableFuture<CotacaoProdutoAResponse> futureC = CompletableFuture
-            .supplyAsync(produtoCClient::obterCotacao)
-            .exceptionally(ex -> {
-                log.error("Erro ao obter cotação do ProdutoC: {}", ex.getMessage());
-                return new CotacaoProdutoAResponse();
-            });*/
-
         CompletableFuture<?>[] futuresArray = futuresMap.values().toArray(new CompletableFuture[0]);
         CompletableFuture.allOf(futuresArray).join();
-//        CompletableFuture.allOf(futureA, futureB, futureC).join();
 
-        Map<String, Object> resultMap = CotacaoFeatureUtil.processFuturesMap(futuresMap);
+        futuresMap.forEach((key, future) -> {
+            try {
+                cotacoes.add(CotacaoMapper.INSTANCE.toCotacao((CotacaoProdutoAResponse) future.get()));
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
-        return CotacaoMapper.INSTANCE.toCotacao(resultMap);
+        return cotacoes;
     }
 }

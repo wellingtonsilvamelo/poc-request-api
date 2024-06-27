@@ -3,6 +3,7 @@ package br.com.tomwell.poc_request_api.mapper;
 import br.com.tomwell.poc_request_api.api.controller.dto.CotacaoRequest;
 import br.com.tomwell.poc_request_api.api.controller.dto.CotacaoResponse;
 import br.com.tomwell.poc_request_api.model.Cotacao;
+import br.com.tomwell.poc_request_api.service.client.http.CotacaoProdutoAResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -19,7 +20,9 @@ public interface CotacaoMapper {
     Cotacao toCotacao(CotacaoRequest cotacaoRequest);
     CotacaoRequest toCotacaoRequest(Cotacao cotacao);
     CotacaoResponse toCotacaoResponse(Cotacao cotacao);
+    Cotacao toCotacao(CotacaoProdutoAResponse cotacaoProdutoAResponse);
     Cotacao toCotacao(Map<String, Object> map);
+    List<CotacaoResponse> toCotacaoResponse(List<Cotacao> cotacoes);
 
     default Double mapToDouble(Object value) {
         if (value instanceof Number) {

@@ -13,11 +13,11 @@ public class ProdutoAClient {
     }
 
     public CotacaoProdutoAResponse obterCotacao() {
-        try {
-            Thread.sleep(3000L);
+        /*try {
+            Thread.sleep(1000L);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
-        }
+        }*/
 
         return restClient.get()
             .uri("http://localhost:3000/produtos/1")

@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/v1/quotes")
 public class CotacaoController {
@@ -29,7 +31,7 @@ public class CotacaoController {
     }
 
     @PostMapping("sync")
-    public ResponseEntity<CotacaoResponse> quoteSync(@RequestBody CotacaoRequest cotacaoRequest) {
+    public ResponseEntity<List<CotacaoResponse>> quoteSync(@RequestBody CotacaoRequest cotacaoRequest) {
         var cotacao = cotacaoService.processarCotacaoSincroca(CotacaoMapper.INSTANCE.toCotacao(cotacaoRequest));
         return ResponseEntity.ok().body(
             CotacaoMapper.INSTANCE.toCotacaoResponse(cotacao));

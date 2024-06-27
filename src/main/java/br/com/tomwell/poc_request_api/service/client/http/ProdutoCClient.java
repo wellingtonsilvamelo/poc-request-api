@@ -14,7 +14,7 @@ public class ProdutoCClient {
 
     public CotacaoProdutoAResponse obterCotacao() {
         try {
-            Thread.sleep(4000L);
+            Thread.sleep(1000L);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
